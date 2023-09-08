@@ -20,7 +20,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'marker_creator = warmup_project.marker_creator:main'
+            'marker_creator = warmup_project.marker_creator:main',
+            'teleop = warmup_project.teleop:main',
+            'drive_square = warmup_project.drive_square:main',
+            'wall_follower = warmup_project.wall_follower:main'
         ],
     },
 )
