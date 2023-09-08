@@ -16,16 +16,16 @@ class DriveSquareNode(Node):
         print(self.t)
         msg = Twist()
 
-        if 15<self.t<=21:
+        if 25<self.t<=30:
             print("turning")
-            self.turn_right()
-        elif self.t>21:
+            self.turn()
+        elif self.t>30:
             self.t = 0
         else:
-            msg.linear.x = 0.2
+            msg.linear.x = 0.4
             self.vel_pub.publish(msg)
 
-    def turn_right(self):
+    def turn(self):
         msg = Twist()
         msg.linear.x = 0.0
         msg.angular.z = 3.14
