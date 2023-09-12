@@ -16,6 +16,7 @@ class WallFollowerNode(Node):
         self.timer = self.create_timer(1, self.run_loop)
         self.vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
         self.msg_pub = self.create_publisher(MarkerArray, 'wall', 10)
+        self.last_timestamp = None
 
         
 
@@ -25,6 +26,7 @@ class WallFollowerNode(Node):
     def process_scan(self, scan):
         self.dist1 = scan.ranges[85]
         dist2 = scan.ranges[95]
+        self.last_timestamp = scan.header.stamp
 
         self.angle_error = self.dist1 - dist2
         # print(f"angle error: {self.angle_error}")
@@ -37,8 +39,11 @@ class WallFollowerNode(Node):
         self.vel_pub.publish(msg)
 
         marker = Marker()
-        marker.header.frame_id = "odom"
-        marker.header.stamp = self.get_clock().now().to_msg()
+        marker.header.frame_id = "base_link"
+        if self.last_timestamp is not None:
+            marker.header.stamp = self.last_timestamp
+        else:
+            marker.header.stamp = self.get_clock().now().to_msg()
         marker.ns = f"{self.get_clock().now()}"
         marker.id = self.id
         self.id += 1
