@@ -3,7 +3,10 @@ from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 from visualization_msgs.msg import Marker
+from std_msgs.msg import Float32
 import math
+from std_msgs.msg import String
+
 
 class PersonFollowerNode(Node):
     def __init__(self):
@@ -12,11 +15,14 @@ class PersonFollowerNode(Node):
         self.x_cord = 0.0
         self.y_cord = 0.0
         self.dist_way = .4
+        self.run = True
 
         self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
         self.timer = self.create_timer(.1, self.run_loop)
         self.vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
         self.msg_pub = self.create_publisher(Marker, 'wall', 10)
+        self.xcord_pub = self.create_publisher(Float32, 'xcord', 10)
+        self.subscriber = self.create_subscription(String, 'command', self.receive_msg, 10)
 
 
     def process_scan(self, scan):
@@ -56,19 +62,28 @@ class PersonFollowerNode(Node):
         marker.color.g = 1.0
 
         self.msg_pub.publish(marker)
+        msg = Float32()
+        msg.data = self.x_cord
+        self.xcord_pub.publish(msg)
 
+
+    def receive_msg(self, cmd):
+        self.run = cmd.data == "Follow"
+        
 
     def run_loop(self):
-        msg = Twist()
-        if self.x_cord > self.dist_way:
-            msg.linear.x = 0.2
-        else:
-            msg.linear.x = 0.0
-        print(self.x_cord, self.y_cord)
+        if self.run:
+            msg = Twist()
+            if self.x_cord > self.dist_way:
+                msg.linear.x = 0.2
+            else:
+                msg.linear.x = 0.0
+            print(self.x_cord, self.y_cord)
 
-        msg.angular.z = self.y_cord
+            msg.angular.z = self.y_cord
+            self.vel_pub.publish(msg)
+        
 
-        self.vel_pub.publish(msg)
         
 
 
