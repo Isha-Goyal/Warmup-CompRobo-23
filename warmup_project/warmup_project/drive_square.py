@@ -8,12 +8,10 @@ from std_msgs.msg import String
 class DriveSquareNode(Node):
     def __init__(self):
         super().__init__('drive_square_node')
-
         self.t = 0
         self.create_timer(0.1, self.update_var)
         self.vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
         self.subscriber = self.create_subscription(String, 'command', self.receive_msg, 10)
-
 
     def update_var(self):
         if self.run: 
@@ -31,6 +29,7 @@ class DriveSquareNode(Node):
                 self.vel_pub.publish(msg)
 
     def turn(self):
+        # turn 90 degrees
         msg = Twist()
         msg.linear.x = 0.0
         msg.angular.z = 3.14 # the speed is pi so that a half second turn is a pi/2 radian rotation

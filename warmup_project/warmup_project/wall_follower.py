@@ -9,7 +9,7 @@ class WallFollowerNode(Node):
     def __init__(self):
         super().__init__('wall_follower_node')
 
-        # we were trying out using a marker array
+        # used a marker array to display the wall
         self.markerlist = MarkerArray()
         self.id = 0
 
@@ -24,14 +24,12 @@ class WallFollowerNode(Node):
         self.dist1 = scan.ranges[85]
         dist2 = scan.ranges[95]
         self.last_timestamp = scan.header.stamp
-
         self.angle_error = self.dist1 - dist2
     
     def run_loop(self):
         msg = Twist()
         msg.linear.x = 0.1
         msg.angular.z = self.angle_error * 2 # turning to correct is proportional to the error
-
         self.vel_pub.publish(msg)
 
         # this section is to publish markers continuously for where the wall is (visualize section)
@@ -61,7 +59,6 @@ class WallFollowerNode(Node):
         self.markerlist.markers.append(marker)
         self.msg_pub.publish(self.markerlist)
         
-
 
 def main(args=None):
     rclpy.init(args=args)

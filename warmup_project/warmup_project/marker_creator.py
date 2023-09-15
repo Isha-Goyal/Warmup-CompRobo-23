@@ -6,7 +6,6 @@ class ExampleNode(Node):
     def __init__(self):
         super().__init__('marker_creator')
         self.vis_pub = self.create_publisher(Marker, 'visualization_marker', 10)
-
         timer_period = 10
         self.timer = self.create_timer(timer_period, self.publish_marker)
 
@@ -34,6 +33,7 @@ class ExampleNode(Node):
 
             # publish marker
             self.vis_pub.publish( marker )
+
 
 def main(args=None):
     rclpy.init(args=args)

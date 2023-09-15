@@ -7,10 +7,10 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
+
 class TeleopNode(Node):
     def __init__(self):
         super().__init__('teleop_node')
-        
         self.timer = self.create_timer(0.1, self.run_loop)
         self.vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
 
@@ -18,7 +18,6 @@ class TeleopNode(Node):
         # runs 10 times every second
         key = self.getKey()
         msg = Twist()
-
         # switch statement to set velocity based on key pressed
         if key == 'w':
             msg.linear.x = 0.5
@@ -42,9 +41,8 @@ class TeleopNode(Node):
             msg.angular.z = -0.5
         elif key == '\x03':
             self.destroy_node()
-
+        # publish the velocity
         self.vel_pub.publish(msg)
-
 
     def getKey(self):
         # tracks which key is pressed on the keyboard
