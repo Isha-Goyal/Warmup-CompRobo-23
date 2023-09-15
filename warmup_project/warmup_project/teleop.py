@@ -15,10 +15,11 @@ class TeleopNode(Node):
         self.vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
 
     def run_loop(self):
+        # runs 10 times every second
         key = self.getKey()
         msg = Twist()
-        print(f"{key}!!")
 
+        # switch statement to set velocity based on key pressed
         if key == 'w':
             msg.linear.x = 0.5
         elif key == 's':
@@ -46,6 +47,7 @@ class TeleopNode(Node):
 
 
     def getKey(self):
+        # tracks which key is pressed on the keyboard
         settings = termios.tcgetattr(sys.stdin)
         tty.setraw(sys.stdin.fileno())
         select.select([sys.stdin], [], [], 0)

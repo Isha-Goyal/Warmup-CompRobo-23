@@ -11,12 +11,14 @@ class ExampleNode(Node):
         self.timer = self.create_timer(timer_period, self.publish_marker)
 
     def publish_marker(self):
+            # create marker
             marker = Marker()
             marker.header.frame_id = "odom"
             marker.header.stamp = self.get_clock().now().to_msg()
             marker.ns = "my_namespace"
             marker.id = 0
 
+            # set marker attributes
             marker.type = Marker.SPHERE
             marker.action = Marker.ADD
             marker.pose.position.x = 1.0
@@ -25,11 +27,12 @@ class ExampleNode(Node):
             marker.scale.x = 1.0
             marker.scale.y = 1.
             marker.scale.z = 1.
-            marker.color.a = 1.0; # Don't forget to set the alpha!
+            marker.color.a = 1.0
             marker.color.r = 0.5
             marker.color.g = 0.0
             marker.color.b = 0.5
 
+            # publish marker
             self.vis_pub.publish( marker )
 
 def main(args=None):

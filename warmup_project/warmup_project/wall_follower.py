@@ -9,6 +9,7 @@ class WallFollowerNode(Node):
     def __init__(self):
         super().__init__('wall_follower_node')
 
+        # we were trying out using a marker array
         self.markerlist = MarkerArray()
         self.id = 0
 
@@ -18,26 +19,22 @@ class WallFollowerNode(Node):
         self.msg_pub = self.create_publisher(MarkerArray, 'wall', 10)
         self.last_timestamp = None
 
-        
-
-        # range_max = 5
-        # range_min = 0.1
-
     def process_scan(self, scan):
+        # we're using two angles: 85 and 95 degrees
         self.dist1 = scan.ranges[85]
         dist2 = scan.ranges[95]
         self.last_timestamp = scan.header.stamp
 
         self.angle_error = self.dist1 - dist2
-        # print(f"angle error: {self.angle_error}")
     
     def run_loop(self):
         msg = Twist()
         msg.linear.x = 0.1
-        msg.angular.z = self.angle_error * 2
+        msg.angular.z = self.angle_error * 2 # turning to correct is proportional to the error
 
         self.vel_pub.publish(msg)
 
+        # this section is to publish markers continuously for where the wall is (visualize section)
         marker = Marker()
         marker.header.frame_id = "base_link"
         if self.last_timestamp is not None:
