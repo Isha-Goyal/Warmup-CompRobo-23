@@ -11,6 +11,7 @@ class PersonFollowerNode(Node):
 
         self.x_cord = 0.0
         self.y_cord = 0.0
+        self.dist_way = .4
 
         self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
         self.timer = self.create_timer(.1, self.run_loop)
@@ -59,7 +60,10 @@ class PersonFollowerNode(Node):
 
     def run_loop(self):
         msg = Twist()
-        msg.linear.x = 0.2
+        if self.x_cord > self.dist_way:
+            msg.linear.x = 0.2
+        else:
+            msg.linear.x = 0.0
         print(self.x_cord, self.y_cord)
 
         msg.angular.z = self.y_cord
