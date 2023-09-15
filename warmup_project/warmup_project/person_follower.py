@@ -9,6 +9,9 @@ class PersonFollowerNode(Node):
     def __init__(self):
         super().__init__('person_follower_node')
 
+        self.x_cord = 0.0
+        self.y_cord = 0.0
+
         self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
         self.timer = self.create_timer(.1, self.run_loop)
         self.vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
@@ -22,8 +25,7 @@ class PersonFollowerNode(Node):
         self.dist_below30 = scan.ranges[left_angle:]
         self.dist = self.dist_below30 + self.dist_above30
 
-        self.x_cord = 0.0
-        self.y_cord = 0.0
+        
         degrees = range(left_angle,right_angle)
         counter = 0
 
@@ -58,8 +60,9 @@ class PersonFollowerNode(Node):
     def run_loop(self):
         msg = Twist()
         msg.linear.x = 0.2
-        msg.angular.z = self.y_cord
         print(self.x_cord, self.y_cord)
+
+        msg.angular.z = self.y_cord
 
         self.vel_pub.publish(msg)
         
