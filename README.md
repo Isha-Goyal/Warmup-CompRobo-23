@@ -18,12 +18,12 @@ We decided to use timing to execute the driving in a square behavior. The main c
 ### Wall Following
 At a high level, we used the laser scanner readings to determine how parallel we were with the wall we were trying to follow. Depending on whether we were rotated towards or away from the wall, we added an angular movement in the correct direction. Our original implementation used one angle reading and specified a target distance from the wall. However, sometimes the robot didn’t react fast enough with that method, and at other times it would get confused and start spinning in circles. We changed our implementation to use two angles, 85 and 95 degrees, to determine parallelism within one reading rather than on the change in distance from the wall. Since the difference between their distance readings gave us a sense of how off of parallel we were, we were able to make our angular adjustment proportional to the error. This implementation allows the robot to accurately follow a wall and respond to walls that aren’t necessarily straight, however, we have not specified a target distance at which it follows the wall.
 
-!()[warmup_project/diagrams/wall_follower_diagram.png]
+![](warmup_project/diagrams/wall_follower_diagram.png)
 
 ### Person Following
 We started by assuming that the person/object starts in front of the robot, and that there are no walls nearby in front of the robot. To identify the object, we used laser scan data from 60 to 120 degrees. By averaging the x and y positions of any point that registered in the laser scan data in this range, we were able to find the center of mass. This is the target that the robot will follow. Since if the object is directly in front of the robot, the marker will have an x value of 0, we used whatever the x value was as the error. We then used that to drive the angular movement of the robot. Since that maintained its sign, it was an effective way to proportionally correct the course. We also used the y value as a surrogate for how far we were from the object (understanding that it’s not exact because of potentially being off in the x or from the object having a significant diameter) to make it stop at an appropriate distance. Our biggest challenge was in accounting for the laser scan angles that weren’t hits. We had to find ways to filter those out so as not to throw off our average, and in the case of the simulation, not end up with dividing by zero errors. We did this by using a little counter loop to count hits and the math.isinf() function in an if statement.
 
-[For a demo of our person follower, visit this video] (https://youtu.be/3Niid8a5RH4) 
+[For a demo of our person follower, visit this video](https://youtu.be/3Niid8a5RH4) 
 
 ### Obstacle avoidance
 We used the same code logic as from our person follower code to detect the object. Once the neato got within a certain distance, we had it turn away from the object using proportional turning. Once it was out of range it could keep driving straight forward.
@@ -32,9 +32,9 @@ Finite State Control
 ## Finite State Control
 We had our finite state controller switch between person following and driving in a square, depending on whether the robot was close to a person/object or not. It took us a while to decide how to incorporate the different states. We wanted to reuse our code from the previous problems and keep them contained in their own nodes. So we decided to use a separate node to manage our existing nodes. The manager node would subscribe to the “xcord” topic published by the person follower code to detect the distance from the object. The manager would publish to a topic called “command.” If the object was far from the neato, it would tell the drive square node to allow publishing of the velocity to the neato. If the object was close to the neato, then the drive square code would stop publishing, and the person follower code would start publishing its velocity instead.
 
-!()[warmup_project/diagrams/finite_state_node_diagram.png]
+![](warmup_project/diagrams/finite_state_node_diagram.png)
 
-!()[warmup_project/diagrams/transition_diagram.png]
+![](warmup_project/diagrams/transition_diagram.png)
 
 [For finite state control video, visit this video](https://youtu.be/yqTAl7L0f8Q) 
 
